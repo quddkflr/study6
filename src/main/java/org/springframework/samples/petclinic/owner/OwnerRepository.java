@@ -15,6 +15,7 @@
  */
 package org.springframework.samples.petclinic.owner;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -77,4 +78,7 @@ public interface OwnerRepository extends JpaRepository<Owner, Integer> {
 	 **/
 	Page<Owner> findAll(Pageable pageable);
 
+	@Query("SELECT DISTINCT owner FROM Owner owner left join fetch owner.pets WHERE owner.firstName LIKE %:fisrtName%")
+	@Transactional(readOnly = true)
+	Collection<Owner> findByFirstName(@Param("firstName") String firstName);
 }

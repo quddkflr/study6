@@ -15,6 +15,7 @@
  */
 package org.springframework.samples.petclinic.owner;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -98,21 +99,21 @@ class OwnerController {
 		}
 
 		// find owners by last name
-		Page<Owner> ownersResults = findPaginatedForOwnersLastName(page, owner.getLastName());
-		if (ownersResults.isEmpty()) {
+		Collection<Owner> results = this.owners.findByFirstName(owner.getFirstName());
+		if (results.isEmpty()) {
 			// no owners found
 			result.rejectValue("lastName", "notFound", "not found");
 			return "owners/findOwners";
 		}
 
-		if (ownersResults.getTotalElements() == 1) {
+		if (results.size() == 1) {
 			// 1 owner found
-			owner = ownersResults.iterator().next();
+			owner = results.iterator().next();
 			return "redirect:/owners/" + owner.getId();
 		}
 
 		// multiple owners found
-		return addPaginationModel(page, model, ownersResults);
+		return addPaginationModel(page, model, (Page<Owner>) results);
 	}
 
 	private String addPaginationModel(int page, Model model, Page<Owner> paginated) {
